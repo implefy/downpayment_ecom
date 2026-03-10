@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_form_view_inherit_downpayment" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.downpayment</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='shop']" position="inside">
+                <field name="downpayment_option"/>
+                <field name="downpayment_percentage_override"
+                       invisible="downpayment_option == 'no'"
+                       string="Custom Downpayment %"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

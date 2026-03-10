@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Downpayment option on the payment page -->
+    <template id="payment_downpayment_option"
+              inherit_id="website_sale.payment"
+              name="Downpayment Option">
+        <xpath expr="//div[@id='payment_method']" position="before">
+            <t t-if="downpayment_available">
+                <div class="card mb-3" id="downpayment_option">
+                    <div class="card-body">
+                        <h5 class="card-title">Payment Option</h5>
+                        <div class="form-check mb-2">
+                            <input type="radio" class="form-check-input"
+                                   name="payment_option" id="pay_full"
+                                   value="full"
+                                   t-att-checked="'checked' if not use_downpayment else None"
+                                   data-downpayment-toggle="full"/>
+                            <label class="form-check-label" for="pay_full">
+                                Pay in full:
+                                <strong t-out="website.price_format(order.amount_total)"/>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input"
+                                   name="payment_option" id="pay_downpayment"
+                                   value="downpayment"
+                                   t-att-checked="'checked' if use_downpayment else None"
+                                   data-downpayment-toggle="downpayment"/>
+                            <label class="form-check-label" for="pay_downpayment">
+                                Pay downpayment now:
+                                <strong t-out="website.price_format(downpayment_amount)"/>
+                                <span class="text-muted ms-2">
+                                    (Remaining: <t t-out="website.price_format(remaining_amount)"/>)
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Order summary on confirmation page showing downpayment info -->
+    <template id="confirmation_downpayment_info"
+              inherit_id="website_sale.confirmation"
+              name="Downpayment Confirmation Info">
+        <xpath expr="//div[@id='oe_structure_website_sale_confirmation_2']" position="before">
+            <t t-if="order.use_downpayment and order.downpayment_amount">
+                <div class="alert alert-info">
+                    <strong>Downpayment Applied</strong>
+                    <p class="mb-0">
+                        You paid a downpayment of
+                        <strong t-out="website.price_format(order.downpayment_amount)"/>.
+                        The remaining balance of
+                        <strong t-out="website.price_format(order.amount_total - order.downpayment_amount)"/>
+                        will be invoiced separately.
+                    </p>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

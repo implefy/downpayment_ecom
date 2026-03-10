@@ -6,8 +6,17 @@
     "depends": [
         "website_sale",
     ],
-    "data": [],
-    "assets": {},
+    "data": [
+        "security/ir.model.access.csv",
+        "views/res_config_settings_views.xml",
+        "views/product_template_views.xml",
+        "views/templates.xml",
+    ],
+    "assets": {
+        "web.assets_frontend": [
+            "downpayment_ecom/static/src/js/downpayment.js",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
