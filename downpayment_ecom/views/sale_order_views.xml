@@ -15,13 +15,15 @@
                        decoration-warning="downpayment_status == 'partial'"
                        decoration-success="downpayment_status == 'full'"/>
             </xpath>
-            <xpath expr="//field[@name='amount_total']" position="after">
+            <xpath expr="//group[@name='sale_total']" position="after">
                 <field name="use_downpayment" invisible="1"/>
                 <field name="downpayment_available" invisible="1"/>
-                <group invisible="not use_downpayment" string="Downpayment Details">
-                    <field name="downpayment_amount"/>
-                    <field name="downpayment_paid"/>
-                    <field name="downpayment_remaining"/>
+                <group invisible="not use_downpayment" colspan="2">
+                    <group string="Downpayment Details" colspan="2">
+                        <field name="downpayment_amount"/>
+                        <field name="downpayment_paid"/>
+                        <field name="downpayment_remaining"/>
+                    </group>
                 </group>
             </xpath>
         </field>
