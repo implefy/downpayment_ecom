@@ -10,6 +10,7 @@
         "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
         "views/product_template_views.xml",
+        "views/sale_order_views.xml",
         "views/templates.xml",
     ],
     "assets": {
