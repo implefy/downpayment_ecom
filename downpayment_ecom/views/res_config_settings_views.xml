@@ -6,7 +6,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="website_sale.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//setting[@id='website_sale_price']/.." position="after">
+            <xpath expr="//block[@id='website_payment_block']" position="inside">
                 <block title="Downpayment" name="downpayment_setting">
                     <setting id="downpayment_setting" string="Downpayment"
                              help="Allow customers to pay a partial amount at checkout">
