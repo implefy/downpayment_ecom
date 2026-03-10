@@ -7,25 +7,6 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 class WebsiteSaleDownpayment(WebsiteSale):
 
-    @http.route()
-    def shop_payment(self, **post):
-        order_sudo = request.cart
-        if order_sudo and 'use_downpayment' in post:
-            order_sudo.use_downpayment = post.get('use_downpayment') == '1'
-
-        response = super().shop_payment(**post)
-
-        if order_sudo and order_sudo.downpayment_available:
-            if hasattr(response, 'qcontext'):
-                response.qcontext.update({
-                    'downpayment_available': order_sudo.downpayment_available,
-                    'downpayment_amount': order_sudo.downpayment_amount,
-                    'use_downpayment': order_sudo.use_downpayment,
-                    'remaining_amount': order_sudo.amount_total - order_sudo.downpayment_amount,
-                })
-
-        return response
-
     @http.route(
         '/shop/downpayment/toggle',
         type='json',

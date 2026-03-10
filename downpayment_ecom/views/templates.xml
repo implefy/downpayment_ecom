@@ -1,43 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Reusable downpayment toggle card -->
+    <template id="downpayment_toggle_card" name="Downpayment Toggle Card">
+        <t t-if="website_sale_order and website_sale_order.downpayment_available">
+            <div class="card mb-3" id="downpayment_option">
+                <div class="card-body">
+                    <h5 class="card-title">Payment Option</h5>
+                    <div class="form-check mb-2">
+                        <input type="radio" class="form-check-input"
+                               name="payment_option" id="pay_full"
+                               value="full"
+                               t-att-checked="'checked' if not website_sale_order.use_downpayment else None"
+                               data-downpayment-toggle="full"/>
+                        <label class="form-check-label" for="pay_full">
+                            Pay in full:
+                            <strong
+                                t-out="website_sale_order.amount_total"
+                                t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input"
+                               name="payment_option" id="pay_downpayment"
+                               value="downpayment"
+                               t-att-checked="'checked' if website_sale_order.use_downpayment else None"
+                               data-downpayment-toggle="downpayment"/>
+                        <label class="form-check-label" for="pay_downpayment">
+                            Pay downpayment now:
+                            <strong
+                                t-out="website_sale_order.downpayment_amount"
+                                t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                            <span class="text-muted ms-2">
+                                (Remaining:
+                                <t t-out="website_sale_order.amount_total - website_sale_order.downpayment_amount"
+                                   t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>)
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Downpayment option on the cart page -->
+    <template id="cart_downpayment_option"
+              inherit_id="website_sale.cart"
+              name="Cart Downpayment Option">
+        <xpath expr="//div[@id='oe_structure_website_sale_cart_1']" position="before">
+            <t t-call="downpayment_ecom.downpayment_toggle_card"/>
+        </xpath>
+    </template>
+
     <!-- Downpayment option on the payment page -->
     <template id="payment_downpayment_option"
               inherit_id="website_sale.payment"
-              name="Downpayment Option">
+              name="Payment Downpayment Option">
         <xpath expr="//div[@id='payment_method']" position="before">
-            <t t-if="downpayment_available">
-                <div class="card mb-3" id="downpayment_option">
-                    <div class="card-body">
-                        <h5 class="card-title">Payment Option</h5>
-                        <div class="form-check mb-2">
-                            <input type="radio" class="form-check-input"
-                                   name="payment_option" id="pay_full"
-                                   value="full"
-                                   t-att-checked="'checked' if not use_downpayment else None"
-                                   data-downpayment-toggle="full"/>
-                            <label class="form-check-label" for="pay_full">
-                                Pay in full:
-                                <strong t-out="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input type="radio" class="form-check-input"
-                                   name="payment_option" id="pay_downpayment"
-                                   value="downpayment"
-                                   t-att-checked="'checked' if use_downpayment else None"
-                                   data-downpayment-toggle="downpayment"/>
-                            <label class="form-check-label" for="pay_downpayment">
-                                Pay downpayment now:
-                                <strong t-out="downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                                <span class="text-muted ms-2">
-                                    (Remaining: <t t-out="remaining_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>)
-                                </span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </t>
+            <t t-call="downpayment_ecom.downpayment_toggle_card"/>
+        </xpath>
+    </template>
+
+    <!-- Show downpayment amount in cart summary total -->
+    <template id="total_downpayment_row"
+              inherit_id="website_sale.total"
+              name="Downpayment in Cart Total">
+        <xpath expr="//tr[@name='o_order_total']" position="after">
+            <tr t-if="website_sale_order.use_downpayment and website_sale_order.downpayment_available"
+                name="o_order_downpayment" class="text-success">
+                <td colspan="2" class="border-0 ps-0 pt-0 pb-2">
+                    <strong>Due now (downpayment)</strong>
+                </td>
+                <td class="text-end border-0 px-0 pt-0 pb-2">
+                    <strong
+                        t-out="website_sale_order.downpayment_amount"
+                        class="monetary_field text-end p-0"
+                        t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                </td>
+            </tr>
+            <tr t-if="website_sale_order.use_downpayment and website_sale_order.downpayment_available"
+                name="o_order_remaining" class="text-muted">
+                <td colspan="2" class="border-0 ps-0 pt-0 pb-2">
+                    Remaining balance
+                </td>
+                <td class="text-end border-0 px-0 pt-0 pb-2">
+                    <span
+                        t-out="website_sale_order.amount_total - website_sale_order.downpayment_amount"
+                        class="monetary_field text-end p-0"
+                        t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
+                </td>
+            </tr>
         </xpath>
     </template>
 
@@ -51,9 +103,13 @@
                     <strong>Downpayment Applied</strong>
                     <p class="mb-0">
                         You paid a downpayment of
-                        <strong t-out="order.downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>.
+                        <strong
+                            t-out="order.downpayment_amount"
+                            t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>.
                         The remaining balance of
-                        <strong t-out="order.amount_total - order.downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        <strong
+                            t-out="order.amount_total - order.downpayment_amount"
+                            t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         will be invoiced separately.
                     </p>
                 </div>
