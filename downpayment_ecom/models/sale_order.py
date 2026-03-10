@@ -27,6 +27,10 @@ class SaleOrder(models.Model):
         compute='_compute_downpayment_remaining',
         currency_field='currency_id',
     )
+    downpayment_transaction_count = fields.Integer(
+        string="Payment Count",
+        compute='_compute_downpayment_transaction_count',
+    )
     downpayment_status = fields.Selection(
         selection=[
             ('none', "No Downpayment"),
@@ -132,6 +136,26 @@ class SaleOrder(models.Model):
                 order.downpayment_status = 'partial'
             else:
                 order.downpayment_status = 'pending'
+
+    @api.depends('transaction_ids')
+    def _compute_downpayment_transaction_count(self):
+        for order in self:
+            order.downpayment_transaction_count = len(order.transaction_ids)
+
+    def action_view_downpayment_transactions(self):
+        """Open the list of payment transactions linked to this order."""
+        self.ensure_one()
+        action = {
+            'name': "Payment Transactions",
+            'type': 'ir.actions.act_window',
+            'res_model': 'payment.transaction',
+            'view_mode': 'list,form',
+            'domain': [('id', 'in', self.transaction_ids.ids)],
+        }
+        if len(self.transaction_ids) == 1:
+            action['view_mode'] = 'form'
+            action['res_id'] = self.transaction_ids.id
+        return action
 
     def _get_website_payment_amount(self):
         """Return the amount the customer should pay on the website."""
