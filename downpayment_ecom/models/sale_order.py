@@ -20,7 +20,6 @@ class SaleOrder(models.Model):
     downpayment_paid = fields.Monetary(
         string="Downpayment Paid",
         compute='_compute_downpayment_paid',
-        store=True,
         currency_field='currency_id',
     )
     downpayment_remaining = fields.Monetary(
@@ -37,7 +36,6 @@ class SaleOrder(models.Model):
         ],
         string="Downpayment Status",
         compute='_compute_downpayment_status',
-        store=True,
     )
 
     @api.depends('website_id', 'amount_total', 'order_line.product_id')
@@ -74,7 +72,7 @@ class SaleOrder(models.Model):
                 # Percentage mode — check for per-product overrides
                 amount = self._compute_percentage_downpayment(order, website)
 
-            precision = order.currency_id.decimal_places
+            precision = order.currency_id.decimal_places if order.currency_id else 2
             order.downpayment_amount = float_round(amount, precision_digits=precision)
 
     @api.model
@@ -123,6 +121,9 @@ class SaleOrder(models.Model):
         for order in self:
             if not order.use_downpayment:
                 order.downpayment_status = 'none'
+                continue
+            if not order.currency_id:
+                order.downpayment_status = 'pending'
                 continue
             compare = order.currency_id.compare_amounts
             if compare(order.amount_paid, order.amount_total) >= 0:
