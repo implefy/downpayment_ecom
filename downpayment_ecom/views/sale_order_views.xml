@@ -1,58 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Downpayment tracking on sale order form -->
+    <!-- Show downpayment info on sale order form -->
     <record id="sale_order_view_form_inherit_downpayment" model="ir.ui.view">
         <field name="name">sale.order.form.inherit.downpayment</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='payment_term_id']" position="after">
-                <field name="downpayment_status"
-                       invisible="downpayment_status == 'none'"
-                       widget="badge"
-                       decoration-info="downpayment_status == 'pending'"
-                       decoration-warning="downpayment_status == 'partial'"
-                       decoration-success="downpayment_status == 'full'"/>
-            </xpath>
-            <xpath expr="//div[@name='button_box']" position="inside">
-                <field name="use_downpayment" invisible="1"/>
-                <button name="action_view_downpayment_transactions"
-                        type="object"
-                        class="oe_stat_button"
-                        icon="fa-money"
-                        invisible="not use_downpayment">
-                    <field name="downpayment_transaction_count"
-                           string="Payments"
-                           widget="statinfo"/>
-                </button>
-            </xpath>
-            <xpath expr="//group[@name='sale_total']" position="after">
-                <field name="downpayment_available" invisible="1"/>
-                <group invisible="not use_downpayment" colspan="2">
-                    <group string="Downpayment Details" colspan="2">
-                        <field name="downpayment_amount"/>
-                        <field name="downpayment_paid"/>
-                        <field name="downpayment_remaining"/>
-                    </group>
-                </group>
-            </xpath>
-        </field>
-    </record>
-
-    <!-- Add downpayment columns to sale order list view -->
-    <record id="sale_order_view_list_inherit_downpayment" model="ir.ui.view">
-        <field name="name">sale.order.list.inherit.downpayment</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='amount_total']" position="after">
-                <field name="downpayment_status"
-                       optional="hide"
-                       widget="badge"
-                       decoration-info="downpayment_status == 'pending'"
-                       decoration-warning="downpayment_status == 'partial'"
-                       decoration-success="downpayment_status == 'full'"/>
+                <field name="use_downpayment" readonly="1"
+                       invisible="not use_downpayment"/>
+                <field name="downpayment_amount"
+                       invisible="not use_downpayment"/>
             </xpath>
         </field>
     </record>
