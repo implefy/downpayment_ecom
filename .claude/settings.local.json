@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.odoo.com)",
+      "Bash(mkdir downpayment_ecom && git mv __init__.py __manifest__.py controllers/ models/ wizard/ downpayment_ecom/ && mv data/ security/ views/ static/ downpayment_ecom/)"
+    ]
+  }
+}
