@@ -18,7 +18,7 @@
                                    data-downpayment-toggle="full"/>
                             <label class="form-check-label" for="pay_full">
                                 Pay in full:
-                                <strong t-out="website.price_format(order.amount_total)"/>
+                                <strong t-out="order.amount_total" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                             </label>
                         </div>
                         <div class="form-check">
@@ -29,9 +29,9 @@
                                    data-downpayment-toggle="downpayment"/>
                             <label class="form-check-label" for="pay_downpayment">
                                 Pay downpayment now:
-                                <strong t-out="website.price_format(downpayment_amount)"/>
+                                <strong t-out="downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                                 <span class="text-muted ms-2">
-                                    (Remaining: <t t-out="website.price_format(remaining_amount)"/>)
+                                    (Remaining: <t t-out="remaining_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>)
                                 </span>
                             </label>
                         </div>
@@ -51,9 +51,9 @@
                     <strong>Downpayment Applied</strong>
                     <p class="mb-0">
                         You paid a downpayment of
-                        <strong t-out="website.price_format(order.downpayment_amount)"/>.
+                        <strong t-out="order.downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>.
                         The remaining balance of
-                        <strong t-out="website.price_format(order.amount_total - order.downpayment_amount)"/>
+                        <strong t-out="order.amount_total - order.downpayment_amount" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         will be invoiced separately.
                     </p>
                 </div>
